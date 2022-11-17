@@ -1,7 +1,6 @@
 import {  DataTypes } from "sequelize";
 import { db } from "../db/db.js";
 import { Deliverman } from "./deliverman.model.js";
-import { Purchase } from "./purchase.model.js";
 import {Employees} from "./employees.model.js"
 
 const { STRING, INTEGER } = DataTypes
@@ -35,19 +34,11 @@ export const Order = db.define('order',{
         deliverman_id:{ 
             type: INTEGER,
             allowNull: true
-        },
-        purchase_id:{ 
-            type: INTEGER,
-            allowNull: true
         }
         })
 
         Order.belongsTo(Deliverman, {foreignKey: 'deliverman_id', sourceKey: 'id'});
         Deliverman.hasMany(Order, {foreignKey: 'deliverman_id', targetId: 'id'});
-
-        Order.belongsTo(Purchase, {foreignKey: 'purchase_id', sourceKey: 'id'});
-        Purchase.hasMany(Order, {foreignKey: 'purchase_id', targetId: 'id'});
-
 
         Order.belongsTo(Employees, {foreignKey: 'employee_id', sourceKey: 'id'});
         Employees.hasMany(Order, {foreignKey: 'employee_id', targetId: 'id'});

@@ -15,8 +15,12 @@ export const Purchase = db.define('purchase',{
             type: INTEGER,
             allowNull: true
         },
-        details:{
+        detail_id:{
             type: ARRAY,
+            allowNull: true
+        },
+        order_id: {
+            type: INTEGER,
             allowNull: true
         }
     })
@@ -28,18 +32,3 @@ export const Purchase = db.define('purchase',{
         
 
 
-
-    {
-        id: 982365,
-        total: 9826,
-        details_id: 3463
-    }
-
-    id:29692,
-    details: [
-        {
-            id:1235,
-            cantidad: 2,
-            subtotal: 50000
-        }
-    ]
