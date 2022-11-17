@@ -1,8 +1,8 @@
-import { DetailPurchase } from '../models/detail_purchase.model.js'
+import { Detail } from '../models/detail.model.js'
 
 export const DetailPurchases = async (req,res) => {
     try{
-        const  detailPurchaseList = await DetailPurchase.findAll({ include: { all: true }})
+        const  detailPurchaseList = await Detail .findAll({ include: { all: true }})
         res.json( detailPurchaseList)
     }catch(err){
         console.log(err);
@@ -13,7 +13,7 @@ export const DetailPurchases = async (req,res) => {
 export const detailPurchaseById = async (req,res) => {
     const { id } = req.params
     try{
-        const purchaseId = await DetailPurchase.findOne({
+        const purchaseId = await Detail.findOne({
             where: {
               id,
             },
@@ -30,7 +30,7 @@ export const createDetailPurchase = async  (req,res) => {
     try {
         const { purchase_id, product_id, amount, total } = req.body
         
-        const createRegister = await DetailPurchase.create({
+        const createRegister = await Detail.create({
             purchase_id, product_id, amount, total
         })
         res.status(200).json({message: "Register was created succesfully", createRegister})
@@ -43,7 +43,7 @@ export const createDetailPurchase = async  (req,res) => {
 export const deleteDetailPurchase = async (req,res) => {
     const { id } = req.params
     try{
-         await DetailPurchase.destroy({
+         await Detail.destroy({
             where: {
                 id
             }
@@ -59,7 +59,7 @@ export const editDetailPurchase = async (req,res) => {
     try {
         const { purchase_id, product_id, amount, total  } = req.body
     
-        const editRegister = await DetailPurchase.findByPk(id)
+        const editRegister = await Detail.findByPk(id)
         editRegister.purchase_id = purchase_id
         editRegister.product_id = product_id
         editRegister.amount = amount

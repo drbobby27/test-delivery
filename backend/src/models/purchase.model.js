@@ -16,7 +16,7 @@ export const Purchase = db.define('purchase',{
             allowNull: true
         },
         detail_id:{
-            type: ARRAY,
+            type: INTEGER,
             allowNull: true
         },
         order_id: {
