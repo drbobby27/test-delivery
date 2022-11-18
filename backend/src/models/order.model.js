@@ -1,21 +1,18 @@
 import {  DataTypes } from "sequelize";
 import { db } from "../db/db.js";
-import { Deliverman } from "./deliverman.model.js";
-import {Employees} from "./employees.model.js"
 
-const { STRING, INTEGER } = DataTypes
+const { STRING, DOUBLE } = DataTypes
 
-export const Order = db.define('order',{ 
+export const Order = db.define('orders',{ 
         id: {
-            type: INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+            type: STRING,
+            primaryKey: true
         },
-        client_name:{
+        date_order:{
             type: STRING,
             allowNull: true
         },
-        address:{
+        client_name:{
             type: STRING,
             allowNull: true
         },
@@ -23,26 +20,26 @@ export const Order = db.define('order',{
             type: STRING,
             allowNull: true
         },
-        state:{ 
+        status:{ 
+            type: STRING,
+            allowNull: true,
+            defaultValue: "En proceso"
+        },
+        address: {
             type: STRING,
             allowNull: true
         },
-        employee_id:{ 
-            type: INTEGER,
+        total: {
+            type: DOUBLE,
             allowNull: true
         },
-        deliverman_id:{ 
-            type: INTEGER,
+        description: {
+            type: STRING,
             allowNull: true
         }
         })
 
-        Order.belongsTo(Deliverman, {foreignKey: 'deliverman_id', sourceKey: 'id'});
-        Deliverman.hasMany(Order, {foreignKey: 'deliverman_id', targetId: 'id'});
-
-        Order.belongsTo(Employees, {foreignKey: 'employee_id', sourceKey: 'id'});
-        Employees.hasMany(Order, {foreignKey: 'employee_id', targetId: 'id'});
-
+        
 
 
 

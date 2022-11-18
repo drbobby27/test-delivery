@@ -1,19 +1,19 @@
-import { Purchase } from '../models/purchase.model.js'
+import { Detail } from '../models/detail_order.model.js'
 
-export const getPurchases = async (req,res) => {
+export const detail = async (req,res) => {
     try{
-        const purchaseList = await Purchase.findAll()
-        res.json(purchaseList)
+        const  detailPurchaseList = await Detail.findAll({ include: { all: true }})
+        res.json( detailPurchaseList)
     }catch(err){
         console.log(err);
     }
    
 }
 
-export const purchaseById = async (req,res) => {
+export const detailById = async (req,res) => {
     const { id } = req.params
     try{
-        const purchaseId = await Purchase.findOne({
+        const purchaseId = await Detail.findOne({
             where: {
               id,
             },
@@ -26,12 +26,12 @@ export const purchaseById = async (req,res) => {
     }
 }
 
-export const createPurchase = async  (req,res) => {
+export const createDetail = async  (req,res) => {
     try {
-        const {  total, details } = req.body
+        const { order_id, product_id, amount, total  } = req.body
         
-        const createRegister = await Purchase.create({
-            total, details 
+        const createRegister = await Detail.create({
+            order_id, product_id, amount, total 
         })
         res.status(200).json({message: "Register was created succesfully", createRegister})
            
@@ -40,10 +40,10 @@ export const createPurchase = async  (req,res) => {
     }
 }
 
-export const deletePurchase = async (req,res) => {
+export const deleteDetail = async (req,res) => {
     const { id } = req.params
     try{
-         await Purchase.destroy({
+         await Detail.destroy({
             where: {
                 id
             }
@@ -54,15 +54,16 @@ export const deletePurchase = async (req,res) => {
        }
 }
 
-export const editPurchase= async (req,res) => {
+export const editDetail = async (req,res) => {
     const { id } = req.params
     try {
-        const { total, details} = req.body
+        const { order_id, product_id, amount, total  } = req.body
     
-        const editRegister = await Purchase.findByPk(id)
+        const editRegister = await Detail.findByPk(id)
+        editRegister.order_id = order_id
+        editRegister.product_id = product_id
+        editRegister.amount = amount
         editRegister.total = total
-        editRegister.details = details
-       
         await editRegister.save()
     
         res.status(200).json({message: `Register with id:${id} was succesfully edited`, editRegister})
