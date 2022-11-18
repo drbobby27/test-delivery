@@ -8,12 +8,12 @@ export const ProductCategory = db.define('category',{
     id: {
         type: INTEGER,
         primaryKey: true, 
-        autoIncrement: true},
+        autoIncrement: true
+    },
     type: {
          type: STRING,
         allowNull: false
         }
-
     })
 
             
