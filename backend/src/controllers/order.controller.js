@@ -1,4 +1,6 @@
 import { Order } from '../models/order.model.js'
+import { Detail } from '../models/detail_order.model.js'
+import { v4 } from 'uuid'
 
 export const getOrders = async (req,res) => {
     try{
@@ -28,13 +30,33 @@ export const orderById = async (req,res) => {
 
 export const createOrder = async  (req,res) => {
     try {
-        const { client_name,  address, phone_number, state,employee_id, deliverman_id , purchase_id } = req.body
+        const {  products, client_name , phone_number, address, total  } = req.body
+        const uuid = v4()
         
-       
-        const createRegister = await Order.create({
-            client_name,  address, phone_number, state,employee_id, deliverman_id , purchase_id
+        const today = new Date()
+    
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds()
+        let dateNow = today.getFullYear() + '-' + (today.getMonth()+1) + '-' +  today.getDate() 
+        let  date_order = `${dateNow} ${time}`
+
+        
+        const desc_product = arr => arr.map(({cantidad, id}) => {
+        return `Compraste: ${cantidad}  id: ${id} por un total de:${total}`
         })
-        res.status(200).json({message: "Register was created succesfully", createRegister})
+       
+        const createOrder = await Order.create({
+            id: uuid, date_order,  client_name , phone_number, address, total, description: desc_product(products) 
+        })
+
+        
+
+        const createDetail = await products.map(({product_id, amount, total}) => {
+            return  Detail.create({
+                order_id: uuid, product_id, amount, total
+         })
+        }) 
+
+        res.status(200).json({message: "Register was created succesfully", createOrder})
            
     } catch (error) {
         console.log(error)        
@@ -58,16 +80,16 @@ export const deleteOrder = async (req,res) => {
 export const editOrder= async (req,res) => {
     const { id } = req.params
     try {
-        const { client_name,  address, phone_number, state,employee_id, deliverman_id , purchase_id} = req.body
+        const {  date_order,  client_name, phone_number, status, address, total, description  } = req.body
     
         const editRegister = await Order.findByPk(id)
+        editRegister.date_order = date_order
         editRegister.client_name = client_name
-        editRegister.address = address
         editRegister.phone_number = phone_number
-        editRegister.state = state
-        editRegister.purchase_id = purchase_id
-        editRegister.deliverman_id = deliverman_id
-        editRegister.employee_id = employee_id
+        editRegister.status = status
+        editRegister.address = address
+        editRegister.total = total
+        editRegister.description = description 
         await editRegister.save()
     
         res.status(200).json({message: `Register with id:${id} was succesfully edited`, editRegister})

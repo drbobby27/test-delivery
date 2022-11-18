@@ -2,9 +2,9 @@ import {  DataTypes } from "sequelize";
 import { db } from "../db/db.js";
 import { ProductCategory } from './product_category.model.js'
 
-const { STRING, INTEGER } = DataTypes
+const { STRING, INTEGER, DOUBLE } = DataTypes
 
- const Product = db.define('product',{ 
+export const Product = db.define('product',{ 
         id: {
             type: INTEGER,
             primaryKey: true,
@@ -15,7 +15,7 @@ const { STRING, INTEGER } = DataTypes
             allowNull: true
         },
         price: {
-            type: INTEGER,
+            type: DOUBLE,
             allowNull: true
         },
         long_desc:{
@@ -40,4 +40,3 @@ const { STRING, INTEGER } = DataTypes
         Product.belongsTo(ProductCategory, {foreignKey: 'category_id', sourceKey: 'id'});
         ProductCategory.hasMany(Product, {foreignKey: 'category_id', targetId: 'id'});
         
-        export default Product
