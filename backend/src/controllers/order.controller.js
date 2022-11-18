@@ -30,7 +30,7 @@ export const orderById = async (req,res) => {
 
 export const createOrder = async  (req,res) => {
     try {
-        const {  data } = req.body
+        const {  products, client_name , phone_number, address, total  } = req.body
         const uuid = v4()
         
         const today = new Date()
@@ -39,33 +39,23 @@ export const createOrder = async  (req,res) => {
         let dateNow = today.getFullYear() + '-' + (today.getMonth()+1) + '-' +  today.getDate() 
         let  date_order = `${dateNow} ${time}`
 
-        const {  client_name , phone_number, address, total }  = data
-
-        const description = ''
+        
+        const desc_product = arr => arr.map(({cantidad, id}) => {
+        return `Compraste: ${cantidad}  id: ${id} por un total de:${total}`
+        })
        
         const createOrder = await Order.create({
-            id: uuid, date_order,  client_name , phone_number, address, total, description 
+            id: uuid, date_order,  client_name , phone_number, address, total, description: desc_product(products) 
         })
 
-        const createDetail = await Detail.create({
-               order_id: uuid, product_id, amount, total
-        })
+        
 
-                if (data) {
-                    data.forEach(prod => {
+        const createDetail = await products.map(({product_id, amount, total}) => {
+            return  Detail.create({
+                order_id: uuid, product_id, amount, total
+         })
+        }) 
 
-                        createNewOrderedProduct(prod.id_product, order.id, prod.quantity, prod.price );
-                    });
-                    
-                    res.send({
-                        data,
-                        msg: 'Pedido creado correctamente'
-                    });
-                    
-                } else {
-                    res.status(400).send('Error in insert new record');
-                }
-                
         res.status(200).json({message: "Register was created succesfully", createOrder})
            
     } catch (error) {

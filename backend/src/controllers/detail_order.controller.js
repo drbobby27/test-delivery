@@ -26,19 +26,6 @@ export const detailById = async (req,res) => {
     }
 }
 
-export const createDetail = async  (req,res) => {
-    try {
-        const { order_id, product_id, amount, total  } = req.body
-        
-        const createRegister = await Detail.create({
-            order_id, product_id, amount, total 
-        })
-        res.status(200).json({message: "Register was created succesfully", createRegister})
-           
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 export const deleteDetail = async (req,res) => {
     const { id } = req.params
