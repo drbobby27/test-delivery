@@ -18,7 +18,12 @@ export const detailById = async (req,res) => {
               id,
             },
           });
-          res.json(purchaseId);
+
+          if (purchaseId) {
+            res.status(200).json(purchaseId);
+          } else {
+            res.status(404).json({message:"Este ID no existe en 'detalle orden' "});
+          }
     }catch(err){
         res.status(500).json({
             message: err,

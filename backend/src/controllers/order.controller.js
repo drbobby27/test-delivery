@@ -9,7 +9,6 @@ export const getOrders = async (req,res) => {
     }catch(err){
         console.log(err);
     }
-   
 }
 
 export const orderById = async (req,res) => {
@@ -20,7 +19,13 @@ export const orderById = async (req,res) => {
               id,
             },
           });
-          res.json(orderId);
+
+          if (orderId) {
+            res.status(200).json(orderId);
+          } else {
+            res.status(404).json({message:"Este ID no existe en 'orden'"});
+          }
+          
     }catch(err){
         res.status(500).json({
             message: err,
@@ -30,7 +35,8 @@ export const orderById = async (req,res) => {
 
 export const createOrder = async  (req,res) => {
     try {
-        const {  products, client_name , phone_number, address, total  } = req.body
+        const {  details, client_name , phone_number, address  } = req.body
+
         const uuid = v4()
         
         const today = new Date()
@@ -38,25 +44,28 @@ export const createOrder = async  (req,res) => {
         let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds()
         let dateNow = today.getFullYear() + '-' + (today.getMonth()+1) + '-' +  today.getDate() 
         let  date_order = `${dateNow} ${time}`
-
         
-        const desc_product = arr => arr.map(({cantidad, id}) => {
-        return `Compraste: ${cantidad}  id: ${id} por un total de:${total}`
-        })
+        const desc_product = arr => arr.map(({subtotal, title, amount, id, category }) => `Resumen de la compra:  ${amount} ${category} de la referencia ${title} por un precio de ${subtotal}`)
+
+        const [...newDescription] =  desc_product(details) 
+        const [desc] = newDescription
+
+        const getTotal = arr => arr.map(({subtotal }) => subtotal).reduce((x,y) => x + y)
        
-        const createOrder = await Order.create({
-            id: uuid, date_order,  client_name , phone_number, address, total, description: desc_product(products) 
+        const createOrder =  await Order.create({
+            id: uuid, date_order,  client_name , phone_number, address, total: getTotal(details), description:desc
         })
 
-        
+        const newTry = arr.map(({id,amount} ) => {
+            return  ( { order_id: uuid, product_id: id ,amount, total: getTotal(details)})
+        } )
 
-        const createDetail = await products.map(({product_id, amount, total}) => {
-            return  Detail.create({
-                order_id: uuid, product_id, amount, total
-         })
-        }) 
+        // const newTry = await Detail.create details.map(({id,amount} ) => {
+        //     return  ( { order_id: uuid, product_id: id ,amount, total: getTotal(details)})
+        // } )
+                
 
-        res.status(200).json({message: "Register was created succesfully", createOrder})
+        res.status(200).json({message: "Register was created succesfully",  newTry, createOrder})
            
     } catch (error) {
         console.log(error)        
